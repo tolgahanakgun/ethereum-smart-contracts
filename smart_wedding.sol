@@ -88,6 +88,9 @@ contract SmartWedding{
     
     function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest {
         guests[msg.sender]._objection = _objectMarriage;
+        if(_objectMarriage){
+                    marriageStatus = "Someone objected this marriage and terminated.";
+        }
     }
 
 }

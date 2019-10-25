@@ -27,7 +27,7 @@ contract SmartWedding{
     constructor() public{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
-    }
+    }   
     
     function getSpouses() public view returns (string memory) {
         return string(abi.encodePacked("Spouse 1:=>","address:",
@@ -37,12 +37,12 @@ contract SmartWedding{
     }
     
     // TODO only spouses can add a guest
-    /*
+    
     modifier onlySpouse(){
         require(msg.sender == spouse1._address || msg.sender == spouse2._address, "Only spouses can add a guest!");
         _;
     }
-    */
+    
     
     // Using a mapping is a better idea than using just an array.
     // Mostly this structure will be accessed via address key not index.
@@ -50,7 +50,7 @@ contract SmartWedding{
     
     // TODO only spouses can add a guest
     // TODO cand add guest before ceremony starts
-    function addGuest(string memory _firstName, string memory _lastName, address _address) public /*onlySpouse*/ returns(uint){
+    function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse returns(uint){
         // check the ceremony date, if after the date disallow this function
         // default _acceptance and _objection values are false
         uint _ticket = rand();

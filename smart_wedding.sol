@@ -3,6 +3,8 @@
 
 contract SmartWedding{
     
+    string public marriageStatus;
+    
     struct Spouse{
         address _address;
         string _firstName;
@@ -27,6 +29,7 @@ contract SmartWedding{
     constructor() public{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
+        marriageStatus = "Not married yet";
     }   
     
     function getSpouses() public view returns (string memory) {

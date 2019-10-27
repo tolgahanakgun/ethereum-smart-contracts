@@ -1,4 +1,4 @@
- pragma solidity >0.5.10;
+pragma solidity >0.5.10;
 
 
 contract SmartWedding{
@@ -17,12 +17,16 @@ contract SmartWedding{
     struct Guest {
         string _firstName;
         string _lastName;
-        // does the guest accept to attend to the ceremony
         bool _acceptance;
-        // does the guest object to this marriage
-        bool _objection;
-        uint _ticket;
+        bool _objection; // does the guest object to this marriage
+        bool _attendance;// does the guest accept to attend to the ceremony
+        address _addressG;
     }
+    
+    Guest[] guestList;
+    uint k = 0;
+    uint h=0;
+    
     
     constructor() public{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
@@ -36,27 +40,56 @@ contract SmartWedding{
             "a valid address"," name:",spouse2._firstName," ",spouse2._lastName));
     }
     
-    // TODO only spouses can add a guest
-    
     modifier onlySpouse(){
         require(msg.sender == spouse1._address || msg.sender == spouse2._address, "Only spouses can add a guest!");
         _;
     }
     
-    
-    // Using a mapping is a better idea than using just an array.
-    // Mostly this structure will be accessed via address key not index.
-    mapping(address=>Guest) public guests;
-    
-    // TODO only spouses can add a guest
     // TODO cand add guest before ceremony starts
-    function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse returns(uint){
+    function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse returns (bool){
         // check the ceremony date, if after the date disallow this function
         // default _acceptance and _objection values are false
-        uint _ticket = rand();
-        guests[_address] = Guest(_firstName, _lastName, false, false, _ticket);
-        return _ticket;
+        guestList.push(Guest(_firstName, _lastName, false, false, false, _address));
+        return true;
     }
+    
+    modifier onlyGuest(){
+        for (k; k<guestList.length; k++) {
+            if (guestList[k]._addressG == msg.sender)
+                break;
+        }
+        require(msg.sender == guestList[k]._addressG, "Only for valid guests!");
+        _;                    
+    }
+    
+    //Check guests list
+    // Need to be fixed, it doesn't read bool nor address values. It can't concatenate strings so it shows only one guest.
+    function getGuests() public view returns (string memory) {
+        /*for (uint h=0; h<guestList.length; h++) {*/
+        return string(abi.encodePacked("Guest ", "=>", "Name:",guestList[h]._firstName, " ",guestList[h]._lastName, " Acceptance: ", guestList[h]._acceptance, " Attendance: ",
+        guestList[h]._attendance, " Objection: ", guestList[h]._objection,"\n"));
+        
+    }
+    
+    function checkAcceptance() public onlyGuest returns(string memory){
+        // check the ceremony date, if after the date disallow this function
+        guestList[k]._acceptance == true;
+        return string("See you at the wedding");
+    }
+    
+    function checkAttendance() public onlyGuest returns(string memory){
+        // check the ceremony date, if after the date disallow this function
+        guestList[k]._attendance == true;
+        return string("See you inside");
+    }
+
+
+    function checkObjection() public onlyGuest returns(string memory){
+        // check the ceremony date, if after the date disallow this function
+        guestList[k]._objection == true;
+        return string("How dare you");
+    }
+
 
     function toString(address x) internal pure returns (string memory) {
         bytes memory b = new bytes(20);

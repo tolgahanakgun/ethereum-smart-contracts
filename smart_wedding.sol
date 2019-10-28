@@ -15,6 +15,7 @@ contract SmartWedding{
     // So we cannot use const spouse1 here
     Spouse private spouse1;
     Spouse private spouse2;
+    Register private time;
     
     struct Guest {
         string _firstName;
@@ -29,13 +30,23 @@ contract SmartWedding{
     uint k = 0;
     uint h=0;
     
-    
+    struct Register {
+        uint _time;
+    }
+
+    modifier validTime(uint _timeFrom, uint _timeUntil){require(now >= _timeFrom && now < _timeUntil)
+    }
+
     constructor() public{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
         marriageStatus = "Not married yet";
     }   
     
+    function setDateTime(uint _newTime) public onlySpouse returns (uint memory){
+        _time = newTime;
+    }
+
     function getSpouses() public view returns (string memory) {
         return string(abi.encodePacked("Spouse 1:=>","address:",
             "a valid address"," name:",spouse1._firstName," ",spouse1._lastName,"\n",
@@ -102,9 +113,11 @@ contract SmartWedding{
     }
     
     // generate a random number for guest tickets
-    function rand() public view returns (uint) {
+    function randomNumber() public view returns (uint) {
         return uint(keccak256(abi.encode(msg.sender, now,"a very secure salt value")));
     }
+
+
 
     modifier onlyLoggedInGuest(){
         /*
@@ -116,10 +129,12 @@ contract SmartWedding{
         require(guests[msg.sender]._acceptance /*&& guests[msg.sender]._attendance*/, "Only logged in guests can vote!");
         // TODO after issue #5 is resolved time will be checked whether it is a proper time for voting or not
         // require(checkTime(), "Voting starts at wedding time and ends in 30 min");
+        //need to find difference in timestamp for a day/hours to estimate the _
         _;
     }
     
     function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest {
+        //return marriageStatus?
         guests[msg.sender]._objection = _objectMarriage;
         if(_objectMarriage){
                     marriageStatus = "Someone objected this marriage and terminated.";

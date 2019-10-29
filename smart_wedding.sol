@@ -28,7 +28,7 @@ contract SmartWedding{
     }
     
     Guest[] guestList;
-    uint k = 0;
+    uint k;
     uint h=0;
     
     modifier validTime(uint _timeFrom, uint _timeUntil){require(now >= _timeFrom && now < _timeUntil);
@@ -66,7 +66,7 @@ contract SmartWedding{
     }
     
     modifier onlyGuest(){
-        for (k; k<guestList.length; k++) {
+        for (k=0; k<guestList.length; k++) {
             if (guestList[k]._addressG == msg.sender)
                 break;
         }

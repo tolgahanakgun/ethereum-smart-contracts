@@ -101,9 +101,4 @@ contract SmartWedding{
         return string(b);
     }
     
-    // generate a random number for guest tickets
-    function randomNumber() public view returns (uint) {
-        return uint(keccak256(abi.encode(msg.sender, now,"a very secure salt value")));
-    }
-
 }

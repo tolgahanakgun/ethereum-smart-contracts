@@ -17,7 +17,54 @@ contract SmartWedding{
     Spouse private spouse1;
     Spouse private spouse2;
     
-    
+/* The code regarding timestamp to Date and Time conversion is taken from the Library BokkyPooBahsDateTimeLibrary found on Github via
+ https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/53a99d2ca81270bcb4047c2ba342ad45e0fa17fd/contracts/BokkyPooBahsDateTimeLibrary.sol*/
+    uint constant SECONDS_PER_DAY = 24 * 60 * 60;
+    uint constant SECONDS_PER_HOUR = 60 * 60;
+    uint constant SECONDS_PER_MINUTE = 60;
+    int constant OFFSET19700101 = 2440588;
+
+    uint constant DOW_MON = 1;
+    uint constant DOW_TUE = 2;
+    uint constant DOW_WED = 3;
+    uint constant DOW_THU = 4;
+    uint constant DOW_FRI = 5;
+    uint constant DOW_SAT = 6;
+    uint constant DOW_SUN = 7;
+
+
+    function _daysToDate(uint _days) internal pure returns (uint year, uint month, uint day) {
+        int __days = int(_days);
+
+        int L = __days + 68569 + OFFSET19700101;
+        int N = 4 * L / 146097;
+        L = L - (146097 * N + 3) / 4;
+        int _year = 4000 * (L + 1) / 1461001;
+        L = L - 1461 * _year / 4 + 31;
+        int _month = 80 * L / 2447;
+        int _day = L - 2447 * _month / 80;
+        L = _month / 11;
+        _month = _month + 2 - 12 * L;
+        _year = 100 * (N - 49) + _year + L;
+
+        year = uint(_year);
+        month = uint(_month);
+        day = uint(_day);
+    }
+
+    function timestampToDateTime(uint timestamp) internal pure returns (uint year, uint month, uint day, uint hour, uint minute, uint second) {
+        (year, month, day) = _daysToDate(timestamp / SECONDS_PER_DAY);
+        uint secs = timestamp % SECONDS_PER_DAY;
+        hour = secs / SECONDS_PER_HOUR;
+        secs = secs % SECONDS_PER_HOUR;
+        minute = secs / SECONDS_PER_MINUTE;
+        second = secs % SECONDS_PER_MINUTE;
+    }
+// Here the reused code ends.
+
+    function getWeddingDateTime() public view returns (uint year, uint month, uint day, uint hour, uint minute, uint second){
+        (year, month, day, hour, minute, second)=timestampToDateTime(weddingTime);
+    }
     struct Guest {
         string _firstName;
         string _lastName;
@@ -39,11 +86,9 @@ contract SmartWedding{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
         marriageStatus = "Not married yet";
+        weddingTime = 1590494400; //weddingTime set to 05/26/2020 at 12:00
     }   
     
-    function setDateTime(uint _newTime) public onlySpouse returns (uint){
-        weddingTime = _newTime;
-    }
 
     function getSpouses() public view returns (string memory) {
         return string(abi.encodePacked("Spouse 1:=>","address:",

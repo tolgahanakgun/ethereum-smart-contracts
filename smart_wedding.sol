@@ -115,28 +115,4 @@ contract SmartWedding{
         return uint(keccak256(abi.encode(msg.sender, now,"a very secure salt value")));
     }
 
-
-
-    modifier onlyLoggedInGuest(){
-        /*
-         * There is no way to check of an existance of a key in solidity mapping
-         * so we can just use _attendance and _acceptance fields to check 
-         * a guest is included in the map and accepted the invitation
-        **/
-        // TODO after issue #9 is resolved, also _attendance of a guest will be checked
-        require(guestList[msg.sender]._acceptance /*&& guests[msg.sender]._attendance*/, "Only logged in guests can vote!");
-        // TODO after issue #5 is resolved time will be checked whether it is a proper time for voting or not
-        // require(checkTime(), "Voting starts at wedding time and ends in 30 min");
-        //need to find difference in timestamp for a day/hours to estimate the _
-        _;
-    }
-    
-    function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest {
-        //return marriageStatus?
-        guestList[msg.sender]._objection = _objectMarriage;
-        if(_objectMarriage){
-                    marriageStatus = "Someone objected this marriage and terminated.";
-        }
-    }
-
 }

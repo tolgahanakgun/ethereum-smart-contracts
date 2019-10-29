@@ -74,7 +74,7 @@ contract SmartWedding{
         address _addressG;
     }
     
-    Guest[] guestList;
+    Guest[] public guestList;
     uint k;
     uint h=0;
     
@@ -119,31 +119,22 @@ contract SmartWedding{
         _;                    
     }
     
-    //Check guests list
-    // Need to be fixed, it doesn't read bool nor address values. It can't concatenate strings so it shows only one guest.
-    function getGuests() public view returns (string memory) {
-        /*for (uint h=0; h<guestList.length; h++) {*/
-        return string(abi.encodePacked("Guest ", "=>", "Name:",guestList[h]._firstName, " ",guestList[h]._lastName, " Acceptance: ", guestList[h]._acceptance, " Attendance: ",
-        guestList[h]._attendance, " Objection: ", guestList[h]._objection,"\n"));
-        
-    }
-    
     function checkAcceptance() public onlyGuest returns(string memory){
         // check the ceremony date, if after the date disallow this function
-        guestList[k]._acceptance == true;
-        return string("See you at the wedding");
+        guestList[k]._acceptance = true;
+        return ("See you at the wedding");
     }
     
     function checkAttendance() public onlyGuest returns(string memory){
         // check the ceremony date, if after the date disallow this function
-        guestList[k]._attendance == true;
+        guestList[k]._attendance = true;
         return string("See you inside");
     }
 
 
     function checkObjection() public onlyGuest returns(string memory){
         // check the ceremony date, if after the date disallow this function
-        guestList[k]._objection == true;
+        guestList[k]._objection = true;
         return string("How dare you");
     }
 

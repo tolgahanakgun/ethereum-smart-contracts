@@ -84,10 +84,10 @@ contract SmartWedding{
     }
 
     constructor() public{
-        spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
-        spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
+        spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"Romeo","Montague");
+        spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"Juliet","Capulet");
         marriageStatus = "Not married yet";
-        weddingTime = now; //1590494400; //weddingTime set to 05/26/2020 at 12:00
+        weddingTime = 1590494400; //weddingTime set to 05/26/2020 at 12:00
     }   
     
 
@@ -103,8 +103,8 @@ contract SmartWedding{
         _;
     }
     
-    // TODO cand add guest before ceremony starts
-    function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse returns (bool){
+    function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse
+    validTime(now, weddingTime-259200, "Cannot add guests less than 3 days before the wedding") returns (bool){
         // check the ceremony date, if after the date disallow this function
         // default _acceptance and _objection values are false
         guestList.push(Guest(_firstName, _lastName, false, false, false, _address));
@@ -120,14 +120,16 @@ contract SmartWedding{
         _;                    
     }
     
-    function checkAcceptance() public onlyGuest returns(string memory){
+    function acceptInvitation() public onlyGuest 
+    validTime(now, weddingTime-259200, "You cannot accept the invitation now!") returns(string memory){
         // check the ceremony date, if after the date disallow this function
         guestList[k]._acceptance = true;
         return ("See you at the wedding");
     }
     
-    function checkAttendance() public onlyGuest returns(string memory){
-        // check the ceremony date, if after the date disallow this function
+    function attendCeremony() public onlyGuest 
+    validTime(weddingTime-21600, weddingTime+7200, "Not open attending wedding") returns(string memory){ //6 hours before wedding, 2 hours after
+
         guestList[k]._attendance = true;
         return string("See you inside");
     }
@@ -148,7 +150,7 @@ contract SmartWedding{
         _;
     }
     
-    // A logged_in guest can vote 15 min before the ceremony
+    // A logged_in guest can vote 15 min before the ceremony and 15 min after started
     function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest 
         validTime(weddingTime-900,weddingTime+900, "You can start to vote 15 min before the ceremony!"){
         guestList[k]._objection = _objectMarriage;

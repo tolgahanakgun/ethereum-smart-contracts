@@ -30,10 +30,6 @@ contract SmartWedding{
     uint k = 0;
     uint h=0;
     
-    struct Register {
-        uint _time;
-    }
-
     modifier validTime(uint _timeFrom, uint _timeUntil){require(now >= _timeFrom && now < _timeUntil)
     }
 
@@ -44,7 +40,7 @@ contract SmartWedding{
     }   
     
     function setDateTime(uint _newTime) public onlySpouse returns (uint memory){
-        _time = newTime;
+        time = newTime;
     }
 
     function getSpouses() public view returns (string memory) {

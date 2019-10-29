@@ -139,6 +139,25 @@ contract SmartWedding{
     }
 
 
+    /*if (guestList[k]_objection==true){
+        function voting() public onlyGuest returns(string memory){
+            bool public votes[guest.length] = false;
+            votes[k] = true;
+        }
+        if (now == timestamp) {
+            for (i=0; i<guestList.length; i++)   
+            {
+                if (votes[k]==false){
+                    count = count+1;
+                }
+            }
+            if (count> guestList.length/2){
+                //We cancel the wedding
+            }
+        }
+    }*/
+    
+
     function toString(address x) internal pure returns (string memory) {
         bytes memory b = new bytes(20);
         for (uint i = 0; i < 20; i++)

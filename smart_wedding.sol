@@ -78,7 +78,8 @@ contract SmartWedding{
     uint k;
     uint h=0;
     
-    modifier validTime(uint _timeFrom, uint _timeUntil){require(now >= _timeFrom && now < _timeUntil);
+    modifier validTime(uint _timeFrom, uint _timeUntil, string memory _errorMessage){
+        require(now >= _timeFrom && now < _timeUntil, _errorMessage);
         _;
     }
 
@@ -86,7 +87,7 @@ contract SmartWedding{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"sfds","sdfsd");
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"sfds","sdfsd");
         marriageStatus = "Not married yet";
-        weddingTime = 1590494400; //weddingTime set to 05/26/2020 at 12:00
+        weddingTime = now; //1590494400; //weddingTime set to 05/26/2020 at 12:00
     }   
     
 
@@ -131,14 +132,6 @@ contract SmartWedding{
         return string("See you inside");
     }
 
-
-    function checkObjection() public onlyGuest returns(string memory){
-        // check the ceremony date, if after the date disallow this function
-        guestList[k]._objection = true;
-        return string("How dare you");
-    }
-
-
     function toString(address x) internal pure returns (string memory) {
         bytes memory b = new bytes(20);
         for (uint i = 0; i < 20; i++)
@@ -146,4 +139,21 @@ contract SmartWedding{
         return string(b);
     }
     
+    modifier onlyLoggedInGuest(){
+        for (k=0; k<guestList.length; k++) {
+            if (guestList[k]._addressG == msg.sender)
+                break;
+        }
+        require(guestList[k]._acceptance && guestList[k]._attendance, "Only logged in guests can vote!");
+        _;
+    }
+    
+    // A logged_in guest can vote 15 min before the ceremony
+    function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest 
+        validTime(weddingTime-900,weddingTime+900, "You can start to vote 15 min before the ceremony!"){
+        guestList[k]._objection = _objectMarriage;
+        if(_objectMarriage){
+                    marriageStatus = "Someone objected this marriage and terminated.";
+        }
+    }
 }

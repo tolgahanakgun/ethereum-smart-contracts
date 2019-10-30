@@ -3,10 +3,13 @@ pragma solidity >0.5.10;
 
 contract SmartWedding{
     
+    // if you are testing the code set this value to true
+    // when areYouTesting = true, validTime() always return true
+    bool private areYouTesting = true;
+
     string public marriageStatus;
     uint public weddingTime;
 
-    
     struct Spouse{
         address _address;
         string _firstName;
@@ -87,7 +90,9 @@ contract SmartWedding{
     uint votingLimit;
     
     modifier validTime(uint _timeFrom, uint _timeUntil, string memory _errorMessage){
-        require(now >= _timeFrom && now < _timeUntil, _errorMessage);
+        if(areYouTesting == false){
+            require(now >= _timeFrom && now < _timeUntil, _errorMessage);
+        }
         _;
     }
 

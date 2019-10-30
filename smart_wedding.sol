@@ -177,7 +177,7 @@ contract SmartWedding{
         votingLimit = objectiontime + 600;
     }
     
-    function agreeToObjection() public onlyLoggedInGuest{
+    function agreeToObjection() public onlyLoggedInGuest returns (string memory){
         if (guestObjected == true){
             guestList[k]._vote = true;
         }

@@ -10,12 +10,14 @@ contract SmartWedding{
         address _address;
         string _firstName;
         string _lastName;
+        bool _cancelWedding;
     }
     
     // constant struct types is not implemented yet.
     // So we cannot use const spouse1 here
     Spouse private spouse1;
     Spouse private spouse2;
+    bool guestObjected = false; 
     
 /* The code regarding timestamp to Date and Time conversion is taken from the Library BokkyPooBahsDateTimeLibrary found on Github via
  https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/53a99d2ca81270bcb4047c2ba342ad45e0fa17fd/contracts/BokkyPooBahsDateTimeLibrary.sol*/
@@ -84,8 +86,8 @@ contract SmartWedding{
     }
 
     constructor() public{
-        spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"Romeo","Montague");
-        spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"Juliet","Capulet");
+        spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"Romeo","Montague",false);
+        spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"Juliet","Capulet",false);
         marriageStatus = "Not married yet";
         weddingTime = 1590494400; //weddingTime set to 05/26/2020 at 12:00
     }   
@@ -154,8 +156,27 @@ contract SmartWedding{
     function objectMarriage(bool _objectMarriage) public onlyLoggedInGuest 
         validTime(weddingTime-900,weddingTime+900, "You can start to vote 15 min before the ceremony!"){
         guestList[k]._objection = _objectMarriage;
+        guestObjected = _objectMarriage;
         if(_objectMarriage){
                     marriageStatus = "Someone objected this marriage and terminated.";
         }
     }
-}
+    function cancelMarriage() public onlySpouse
+    validTime(now, weddingTime, "You can not cancel wedding after marriage") {
+        if(msg.sender == spouse1._address) {
+            spouse1._cancelWedding = true;
+        }
+        else {
+            spouse2._cancelWedding = true;
+        }
+        marriageStatus = "One of the spouses cancelled the wedding. Marriage is terminated.";
+        
+    }
+    function startCermony() public onlySpouse
+    validTime(weddingTime, weddingTime+900, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
+        if (spouse1._cancelWedding == false && spouse2._cancelWedding == false && guestObjected == false) {
+            marriageStatus = "Married";
+        }  
+    
+    }
+    }

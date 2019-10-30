@@ -160,6 +160,7 @@ contract SmartWedding{
     function objectMarriage() public onlyLoggedInGuest 
         validTime(weddingTime-900,weddingTime+900, "You can start to vote 15 min before the ceremony!"){
         guestList[k]._objection = true;
+        guestList[k]._vote = true;
         guestObjected = true;
         uint objectiontime = now;
         votingLimit = objectiontime + 600;
@@ -172,7 +173,7 @@ contract SmartWedding{
     }
     
     function calculateVoting() public onlyLoggedInGuest returns (string memory){
-        if (now < votingLimit){
+        if (now > votingLimit){
             for (uint i=0; i<guestList.length; i++)   
             {
                 if (guestList[i]._vote==true){

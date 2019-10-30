@@ -133,7 +133,16 @@ contract SmartWedding{
         return ("See you at the wedding");
     }
     
-    function attendCeremony() public onlyGuest 
+    modifier onlyAcceptedGuest(){
+        for (k=0; k<guestList.length; k++) {
+            if (guestList[k]._addressG == msg.sender)
+                break;
+        }
+        require(guestList[k]._acceptance, "Only logged in guests can vote!");
+        _;
+    }
+
+    function attendCeremony() public onlyAcceptedGuest 
     validTime(weddingTime-21600, weddingTime+7200, "Not open attending wedding") returns(string memory){ //6 hours before wedding, 2 hours after
 
         guestList[k]._attendance = true;
@@ -152,7 +161,7 @@ contract SmartWedding{
             if (guestList[k]._addressG == msg.sender)
                 break;
         }
-        require(guestList[k]._acceptance && guestList[k]._attendance, "Only logged in guests can vote!");
+        require(guestList[k]._attendance, "Only logged in guests can vote!");
         _;
     }
     

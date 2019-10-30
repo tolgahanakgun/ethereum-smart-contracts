@@ -5,6 +5,7 @@ contract SmartWedding{
     
     string public marriageStatus;
     uint public weddingTime;
+
     
     struct Spouse{
         address _address;
@@ -17,7 +18,8 @@ contract SmartWedding{
     // So we cannot use const spouse1 here
     Spouse private spouse1;
     Spouse private spouse2;
-    bool guestObjected = false; 
+    bool guestObjected = false;
+    bool objectingMajority = false; 
     
 /* The code regarding timestamp to Date and Time conversion is taken from the Library BokkyPooBahsDateTimeLibrary found on Github via
  https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/53a99d2ca81270bcb4047c2ba342ad45e0fa17fd/contracts/BokkyPooBahsDateTimeLibrary.sol*/
@@ -179,6 +181,9 @@ contract SmartWedding{
         if (guestObjected == true){
             guestList[k]._vote = true;
         }
+        else{
+            return("You cannot agree to an objection that does not exist.")
+        }
     }
     
     function calculateVoting() public onlyLoggedInGuest returns (string memory){
@@ -193,6 +198,7 @@ contract SmartWedding{
             }
             if (count> validTotalCount/2){
                 marriageStatus = "Objection accepted. Marriage is terminated.";
+                objectingMajority = true;
             }
         }
         else{
@@ -213,8 +219,9 @@ contract SmartWedding{
     }
     
     function startCermony() public onlySpouse
-    validTime(weddingTime, weddingTime+900, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
-        if (spouse1._cancelWedding == false && spouse2._cancelWedding == false && guestObjected == false) {
+    validTime(weddingTime, weddingTime+START_CEREMONY_UNTIL, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
+        if (spouse1._cancelWedding == false && spouse2._cancelWedding == false && objectingMajority == false) {
+   
             marriageStatus = "Married";
         }  
     

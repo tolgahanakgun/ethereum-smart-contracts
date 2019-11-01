@@ -187,7 +187,7 @@ contract SmartWedding{
             guestList[k]._vote = true;
         }
         else{
-            return("You cannot agree to an objection that does not exist.")
+            return ("You cannot agree to an objection that does not exist.");
         }
     }
     
@@ -224,7 +224,7 @@ contract SmartWedding{
     }
     
     function startCermony() public onlySpouse
-    validTime(weddingTime, weddingTime+START_CEREMONY_UNTIL, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
+    validTime(weddingTime, weddingTime+900, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
         if (spouse1._cancelWedding == false && spouse2._cancelWedding == false && objectingMajority == false) {
    
             marriageStatus = "Married";

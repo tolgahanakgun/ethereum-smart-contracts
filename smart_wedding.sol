@@ -112,7 +112,7 @@ contract SmartWedding{
     }
     
     modifier onlySpouse(){
-        require(msg.sender == spouse1._address || msg.sender == spouse2._address, "Only spouses can add a guest!");
+        require(msg.sender == spouse1._address || msg.sender == spouse2._address, "Only spouses can do this action!");
         _;
     }
     

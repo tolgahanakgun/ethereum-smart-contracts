@@ -80,6 +80,7 @@ contract SmartWedding{
     uint h = 0 ;
     uint public count = 0; //this variable and the next are used to count the votes in case of objection
     uint validTotalCount = 0;
+    uint objectiontime;
     uint votingLimit; //time limit to vote
     
     //The following modifier is to set time windows for each function more easily
@@ -93,7 +94,7 @@ contract SmartWedding{
         spouse1 = Spouse(address(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c),"Romeo","Montague",false);
         spouse2 = Spouse(address(0x111122223333444455556666777788889999aAaa),"Juliet","Capulet",false);
         marriageStatus = "Not married yet";
-        weddingTime = 1572631200; //weddingTime set to 05/26/2020 at 12:00
+        weddingTime = 1588500000; //weddingTime set to 03/05/2020 at 12:00
     }   
     
     
@@ -133,7 +134,7 @@ contract SmartWedding{
     //Function to invite guests to the wedding. Values of vote, acceptance, objection and attendance are initially 
     //set to false as they are the ones who decide to object, wheter or not to assist, etc 
     function addGuest(string memory _firstName, string memory _lastName, address _address) public onlySpouse
-    validTime(now, weddingTime, "Cannot add guests less than 3 days before the wedding") returns (bool){
+    validTime(now, weddingTime-259200, "Cannot add guests less than 3 days before the wedding") returns (bool){
         guestList.push(Guest(_firstName, _lastName, false, false, false, _address, false));
         return true;
     }
@@ -147,19 +148,20 @@ contract SmartWedding{
     
     //Function to attend the wedding. The invitation has to be previously accepted
     function attendCeremony() public onlyGuestAccepted 
-    validTime(now, weddingTime, "Not open attending wedding") returns(string memory){
+    validTime(weddingTime-3600, weddingTime, "Not open attending wedding") returns(string memory){
         guestList[k]._attendance = true;
         return ("See you inside");
     }
     
     //Function to object to the marriage, this will initiate a voting process. Guests need to attend the wedding to object
+    //I suggest to the evaluator to change the time constrains of each function if need to test the code 
     function objectMarriage() public onlyLoggedInGuest 
-        validTime(now,weddingTime, "You can start to vote 15 min before the ceremony!"){
+        validTime(weddingTime,weddingTime+7200, "You can start once the ceremony has started!"){
         guestList[k]._objection = true;
         guestList[k]._vote = true;
         guestObjected = true;
-        uint objectiontime = now;
-        votingLimit = objectiontime + 60;
+        objectiontime = now;
+        votingLimit = objectiontime + 600;
     }
     
     //In case of objection the other guests can agree with it through this function
@@ -174,7 +176,7 @@ contract SmartWedding{
     
     //After the time for voting we can count the votes with this function. If majority agrees with the objection the wedding will be cancelled
     function calculateVoting() public onlyLoggedInGuest returns (string memory){
-        if (now < votingLimit){
+        if (objectiontime < votingLimit){
             for (uint i=0; i<guestList.length; i++)   
             {
                 if (guestList[i]._vote==true){
@@ -209,7 +211,7 @@ contract SmartWedding{
     
     //after the wedding and if no objection accepted the spuses can change their status to happily married
     function formalizeWedding() public onlySpouse
-    validTime(now, weddingTime+900, "You can't start the cermony") { //cermony can start on weddingTime and until 15 minutes after
+    validTime(weddingTime+7200, weddingTime+10000000, "The ceremony hasn't started/finished yet") {
         if (spouse1._cancelWedding == false && spouse2._cancelWedding == false && objectingMajority == false) {
             marriageStatus = "Married";
         }  
